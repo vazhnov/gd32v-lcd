@@ -1,10 +1,14 @@
-# gd32v-lcd
+## gd32v-lcd
+
 LCD library with DMA support for Sipeed Longan Nano (GD32VF103). Also supports setting up automated framebuffer refresh in background.
 
-# Overview
-The official example repository for GD32V has a rudimentary [LCD library](https://github.com/sipeed/Longan_GD32VF_examples/blob/master/gd32v_lcd/src/lcd/lcd.c) but the support for DMA transfers appears to be unfinished and I could not get it working. Therefore, I decided to roll my own. This project contains a DMA-enabled LCD library with all bulk operations such as buffer reads and writes running asynchronously in background for maximum performance. The display controller interface is similar to ST7735 [(Datasheet PDF)](https://www.displayfuture.com/Display/datasheet/controller/ST7735.pdf) in case you're looking for low-level documentation.
+## Overview
 
-This library also supports setting up continuous automatic framebuffer upload in background so that you can effectively use the display as a memory mapped device. Unfortunately, there is no vertical sync pin connected on Sipeed Longan Nano, so avoiding tearing is not possible without hardware modifications (assuming that the LCD controller is similar to ST7735 in this regard).
+The official example repository for GD32V has a rudimentary [LCD library](https://github.com/sipeed/Longan_GD32VF_examples/blob/master/gd32v_lcd/src/lcd/lcd.c) but the support for DMA transfers appears to be unfinished and I could not get it working. Therefore, I decided to roll my own.
+
+This project contains a DMA-enabled LCD library with all bulk operations such as buffer reads and writes running asynchronously in background for maximum performance. The display controller interface is similar to ST7735 [(Datasheet PDF)](https://www.displayfuture.com/Display/datasheet/controller/ST7735.pdf) in case you're looking for low-level documentation.
+
+This library also supports setting up continuous automatic framebuffer upload in background so that you can effectively use the display as a memory mapped device. Unfortunately, there is no vertical sync pin connected on Sipeed Longan Nano, so **avoiding tearing is not possible without hardware modifications** (assuming that the LCD controller is similar to ST7735 in this regard).
 
 There are two simple graphics effects in the main file, one demonstrating on-demand framebuffer upload, and one demonstrating automatic background refresh.
 
@@ -22,3 +26,28 @@ There are two simple graphics effects in the main file, one demonstrating on-dem
 </table>
 
 Thanks to [Kevin Sangeelee](https://github.com/Kevin-Sangeelee) for the comprehensive [blog post](https://www.susa.net/wordpress/2019/10/longan-nano-gd32vf103) on GD32VF103 that was very helpful for me in understanding how to set up the interrupts on this hardware.
+
+## How to compile
+
+Boot your _Sipeed Longan nano_ board with "Boot0" button pressed.
+
+Run `dfu-util -l` and check the output, it must be something like:
+
+```
+Found DFU: [28e9:0189] ver=1000, devnum=2, cfg=1, intf=0, path="3-1", alt=1, name="@Option Bytes  /0x1FFFF800/01*016 g", serial="??"
+Found DFU: [28e9:0189] ver=1000, devnum=2, cfg=1, intf=0, path="3-1", alt=0, name="@Internal Flash  /0x08000000/512*002Kg", serial="??"
+```
+
+Prepare:
+
+```shell
+pip3 install platformio
+git clone 'https://github.com/slmisc/gd32v-lcd.git'
+cd gd32v-lcd
+```
+
+Build and flash:
+
+```shell
+pio run --target upload
+```
